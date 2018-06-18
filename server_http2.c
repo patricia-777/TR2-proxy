@@ -41,7 +41,7 @@ fd_server = socket(AF_INET, SOCK_STREAM, 0);
 setsockopt(fd_server, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(int));
 
 server_addr.sin_family = AF_INET;
-server_addr.sin_addr.s_addr = INADDR_ANY;
+server_addr.sin_addr.s_addr = inet_addr("10.0.2.15");
 server_addr.sin_port = htons(8001);
 
 bind(fd_server, (struct sockaddr*) &server_addr, sizeof(server_addr));
