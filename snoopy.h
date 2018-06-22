@@ -15,6 +15,7 @@
 #include <err.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -29,5 +30,7 @@
 
 int inicioSocketProxy (int porta);
 int esperandoRequisicao (int proxy_socket);
-void sendTextHeader (int socket, char *buffer_requisicao);
-void serveText (int proxy_socket, char *buffer_requisicao);
+int sendTextHeader (int socket, char *requisicao, char *host, char *http);
+void serveText (int conexao_cliente, char *host, char *requisicao, char *http);
+void camposRequisicao(char *buffer_requisicao, char *host, char *requisicao, char *http);
+void dns(char *host, char *host_retorno);
