@@ -7,7 +7,8 @@ typedef struct MinhaJanela {
 	GtkWidget *botao2;
 	GtkWidget *texto1;
 	GtkWidget *texto2;
-	GtkWidget *label;
+	GtkWidget *label1;
+	GtkWidget *label2;
 	GtkWidget *fixed1;
 	GtkWidget *fixed2;
 	GtkWidget *grid;
@@ -50,14 +51,14 @@ int main(int argc, char *argv[])
 	//o que será escrito
   	janela.buffer1 = gtk_text_view_get_buffer (GTK_TEXT_VIEW (janela.view1));
   	gtk_text_buffer_set_text(janela.buffer1, teste, -1);
-  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view1, 0,2,1,100);
+  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view1, 0,3,1,100);
 	
 	janela.view2 = gtk_text_view_new();
 
 	//o que será escrito
   	janela.buffer2 = gtk_text_view_get_buffer (GTK_TEXT_VIEW (janela.view2));
   	gtk_text_buffer_set_text(janela.buffer2, teste, -1);
-  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view2, 50,2,1,100);
+  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view2, 50,3,1,100);
 
 	//botoes
   	janela.botao1 = gtk_button_new_with_label ("Spider");
@@ -77,46 +78,63 @@ int main(int argc, char *argv[])
 	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.texto1, 15, 15);
 	gtk_widget_set_size_request(janela.texto1, 90, 30);
 
-	/*janela.botao = gtk_button_new_with_label("Botão");
-	gtk_fixed_put(GTK_FIXED(janela.fixed), janela.botao, 115, 15);
-	gtk_widget_set_size_request(janela.botao, 80, 30);*/
-
-	janela.label = gtk_label_new("Label");
+	janela.label1 = gtk_label_new("Request");
+	gtk_grid_attach(GTK_GRID(janela.grid), janela.label1, 6, 2, 1, 1);
 	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.label, 190, 15);
-	gtk_widget_set_size_request(janela.label, 100, 30);
+	gtk_widget_set_size_request(janela.label1, 100, 30);
 
-	janela.string1 = "tuc tuc tuc\n";
+	janela.label2 = gtk_label_new("Reply");
+	gtk_grid_attach(GTK_GRID(janela.grid), janela.label2, 51, 2, 1, 1);
+	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.label, 190, 15);
+	gtk_widget_set_size_request(janela.label2, 100, 30);
 
+	//esse rapaz daqui vai escrever na request, pode ser alterado sem medo de ser feliz
+	janela.string1 = "tuc tuc tuc\n"; 
+
+	//já esse rapaz, pertence a reply
 	janela.string2 = "cut cut cut\n";
 
 
 
+	gtk_grid_get_column_homogeneous (janela.grid);
 	gtk_widget_show_all(janela.window);
 	gtk_main();
 
 	return 0;
 }
 
-/* Função chamada */
+/* Nessa funcao, ha o evento do spider */
 static void botao_clicado1(GtkWidget *widget, gpointer data){	
 	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer2, ((JanelaPrincipal *)data) -> string1, -1);
 
 
 	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer1, ((JanelaPrincipal *)data) -> string2, -1);
 
-	gtk_label_set_text( GTK_LABEL( ((JanelaPrincipal *)data) -> label ),
-				(gchar *)gtk_entry_get_text(GTK_ENTRY( ((JanelaPrincipal *)data)  -> texto1)) );
 }
 
-
+/* Nessa funcao, ha o evento do reply */
 static void botao_clicado2(GtkWidget *widget, gpointer data){	
 	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer2, ((JanelaPrincipal *)data) -> string2, -1);
 	
 	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer1, ((JanelaPrincipal *)data) -> string1, -1);
 
-	gtk_label_set_text( GTK_LABEL( ((JanelaPrincipal *)data) -> label ),
-				(gchar *)gtk_entry_get_text(GTK_ENTRY( ((JanelaPrincipal *)data)  -> texto1)) );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
