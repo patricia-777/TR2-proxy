@@ -12,17 +12,18 @@
 
 int main(int argc, char const *argv[])
 {
-	int proxy_socket, conexao_cliente, tam_requisicao, option;
+	int proxy_socket, tam_requisicao, option;
+	int conexao_cliente;
 	
-	char host[TAM_BUFFER];
-	char http[TAM_BUFFER];
-	char requisicao[TAM_BUFFER];
+	// char host[TAM_BUFFER];
+	// char http[TAM_BUFFER];
+	// char requisicao[TAM_BUFFER];
 	int contador_requisicao = 0, n;
 	int PORTA;
 	//flag para testar a funcao dump
 	int flag_dump;
-	int requisito_socket;
-	char buffer_requisicao[TAM_BUFFER];
+	// int requisito_socket;
+	// char buffer_requisicao[TAM_BUFFER];
 	int comparacao, servidor_conectado;
 	//pid_t usado para pegar a referencia do processo filho, depois do fork
 	pid_t pid;
@@ -166,7 +167,7 @@ int print_options(void)
 
 
 //Função da opção request, retorna 1 se for conexao http e retorna 0 se for https
-int requestOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, char *buffer_requisicao)
+int requestOption()
 {
 	int tam_requisicao;
 	int comparacao, flag_http, n;

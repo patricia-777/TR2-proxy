@@ -14,6 +14,14 @@
 #include "snoopy_dump.h"
 
 
+int requisito_socket;
+int conexao_cliente;
+char host[TAM_BUFFER];
+char requisicao[TAM_BUFFER];
+char http[TAM_BUFFER];
+char buffer_requisicao[TAM_BUFFER];
+
+
 
 int inicioSocketProxy (int porta);
 int esperandoRequisicao (int proxy_socket);
