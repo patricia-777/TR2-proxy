@@ -12,28 +12,55 @@
 
 int main(int argc, char const *argv[])
 {
-	int proxy_socket, conexao_cliente, tam_requisicao;
-	char buffer_requisicao[TAM_BUFFER];
+	int proxy_socket, conexao_cliente, tam_requisicao, option;
+	
 	char host[TAM_BUFFER];
 	char http[TAM_BUFFER];
 	char requisicao[TAM_BUFFER];
-	int contador_requisicao = 0;
-	int comparacao;
+	int contador_requisicao = 0, n;
+	int PORTA;
+	//flag para testar a funcao dump
+	int flag_dump;
+	int requisito_socket;
+	char buffer_requisicao[TAM_BUFFER];
+	int comparacao, servidor_conectado;
 	//pid_t usado para pegar a referencia do processo filho, depois do fork
 	pid_t pid;
 
+
+	//Pegando porta pela linha de comando caso o usuario tenha escrito
+	if (argc < 3)
+	{
+		PORTA = PORTA_PADRAO;
+		// flag_dump = 0;
+	}
+	else
+	{
+		PORTA = atoi(argv[2]);
+		// flag_dump = atoi(argv[3]);
+	}
+
+
+	///////COMECANDO O PROXY MESMO
+
+
 	printf ("[PROXY] Iniciando servidor proxy SNOOPY\n");
-    printf ("[PROXY] Endereço do SNOOPY http://localhost:%d/\n", PORTA_PADRAO);
-    printf ("[PROXY] Esperando requisiçoes...\n");
-    // printf ("[PROXY] %d requisições\n", contador_requisicao);
+    printf ("[PROXY] Endereço do SNOOPY http://%s:%d/\n", IP_PADRAO, PORTA);
+    // option = print_options();
+    
 
     //criando o socket do proxy
-    proxy_socket = inicioSocketProxy(PORTA_PADRAO);
+    proxy_socket = inicioSocketProxy(PORTA);
+
+    printf ("[PROXY] Esperando requisiçoes...\n");
 
     while(1)
     {
+		
 		//requisicoes vindas do navegador
         conexao_cliente = esperandoRequisicao (proxy_socket);
+
+
 
 
         //a funcao fork cria uma thread filho rodando as mesmas coisas a partir daqui
@@ -50,21 +77,30 @@ int main(int argc, char const *argv[])
 	            errx (EXIT_FAILURE, "Erro ao ler a requisição");
 	        }
 
+	        printf ("[REQUEST] Requisição recebida: %s\n", buffer_requisicao);
+	        // option = print_options();
+	        
+	        // if(option == 1)
+	        // {
+		        //fazendo o request do proxy
+	        	servidor_conectado = requestOption(requisito_socket, conexao_cliente, host, requisicao, http, buffer_requisicao);
+	        // }
 
-            //tratando da requisição
-    		//separando as informacoes de host, pasta, e http
-	        camposRequisicao(buffer_requisicao, host, requisicao, http);
 
-	        //se a requisição for http entao entra no if e faz a conexao
-	    	comparacao = strncmp(http, "HTTP/", 5);
-	        if (!comparacao)
+	        // if ((option == 1) && servidor_conectado)
+	        if (servidor_conectado)
 	        {
+
+		        //funcoa que faz o dump
+	        	// dumpOption(host, requisicao);
+
+
 		        ////mostrando a requisiçãoelo cliente 
-		        printf ("[REQUEST] Requisição recebida: %s\n", buffer_requisicao);
+		        // printf ("[REQUEST] Requisição recebida: %s\n", buffer_requisicao);
 		        printf ("[REQUEST] Enviando resposta...\n\n");
 
-		        //fazendo a conexao e enviando o resultado para o usuario
-		        serveText (conexao_cliente, host, requisicao, http);
+
+				replyOption(requisito_socket, conexao_cliente, host, requisicao, http);
 
 
 		        printf ("\n[REQUEST] Resposta enviada\n");
@@ -93,6 +129,149 @@ int main(int argc, char const *argv[])
 }
 
 
+
+int print_options(void)
+{
+	int option = 0;
+
+	printf("SELECIONE A OPCAO DESEJADA:\n\n");
+	printf("1- Request\n");
+	printf("2- Spider\n");
+	printf("3- Dump\n");
+	printf("4- Reply\n");
+
+	scanf("%d", &option);
+
+	switch (option)
+	{
+		case 1:
+			printf("falta fazer\n");
+			break;
+		case 2:
+			printf("falta fazer\n");
+			break;
+		case 3:
+			printf("tamu fazendo\n");
+			break;
+		case 4:
+			printf("falta fazer\n");
+			break;
+		default:
+			printf("Opção invalida\n");
+	}
+
+	return option;
+}
+
+
+
+//Função da opção request, retorna 1 se for conexao http e retorna 0 se for https
+int requestOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, char *buffer_requisicao)
+{
+	int tam_requisicao;
+	int comparacao, flag_http, n;
+
+
+    //MOSTRAR AQUI O BUFFER E DEPOIS DO BOTAO REQUEST FOR CLICADO VERIFICAR O BUFFER
+
+    //tratando da requisição
+	//separando as informacoes de host, pasta, e http
+    camposRequisicao(buffer_requisicao, host, requisicao, http);
+
+    //se a requisição for http entao entra no if e faz a conexao
+	comparacao = strncmp(http, "HTTP/", 5);
+    if (!comparacao)
+    {
+    	printf ("[REQUEST] Requisição editada: %s\n", buffer_requisicao);
+    	printf ("[REQUEST] Conectando ao servidor externo...\n");
+
+    	flag_http = 1;
+    }
+    else
+    {
+    	flag_http = 0;
+    }
+
+    return flag_http;
+}
+
+
+void replyOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http)
+{
+    struct sockaddr_in ext_addr;
+    int requisicao_conexao, n;
+    char buffer[TAM_BUFFER];
+    int option;
+
+	char host_ip[INET_ADDRSTRLEN];
+
+
+    // criando socket e verificando se houve erro
+    requisito_socket = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (requisito_socket < 0) 
+    {
+        errx (EXIT_FAILURE, "Erro ao criar o socket do proxy");
+    }
+
+
+    //pegando endereço ip do host solicitado pelo usuario
+    dns(host, host_ip);
+
+    //colocando os parametros para fazer a conexao do socket com o servidor do site externo
+    ext_addr.sin_family = AF_INET;
+    ext_addr.sin_addr.s_addr = inet_addr(host_ip);
+    ext_addr.sin_port = htons(80);
+
+
+    requisicao_conexao = connect(requisito_socket,(struct sockaddr*)&ext_addr,sizeof(struct sockaddr));
+    if (requisicao_conexao < 0) 
+    {
+        errx (EXIT_FAILURE, "Erro de conexao ao servidor remoto");
+    }
+
+    //mandando header para o servidor externo
+    n = sendTextHeader (requisito_socket, requisicao, host, http);
+
+
+	if(n<0)
+	{
+		errx (EXIT_FAILURE, "Error writing to socket");
+	}
+	else
+	{
+		do
+		{
+			//zerando buffer para pegar mais respostas
+			bzero((char*)buffer,TAM_BUFFER);
+
+			//le do socket de 1000 em 1000
+			n=recv(requisito_socket,buffer,TAM_BUFFER,0);
+
+			// printf("[REPLY]Resposta recebida:%s\n", buffer);
+
+			// option = print_options();
+			////////////////////////////////////////////////
+
+			////----->>>>AQUI VAI O REPLY, MOSTRAR O BUFFER ANTES DE ENVIAR PELO SEND
+
+			///////////////////////////////////////////////
+
+			//enquanto tiver dados no buffer ele le e envia ao usuario
+			// if((!(n<=0)) && (option == 4))
+			if(!(n<=0))
+			{
+			    send(conexao_cliente,buffer,n,0);
+			}
+
+		} while(n>0);
+	}
+
+    close(requisito_socket);
+	close(conexao_cliente);
+
+}
+
+
 //Funcao que faz as vezes de um DNS, traduzindo para o ip o nome do host
 void dns(char *host, char *host_retorno)
 {
@@ -117,6 +296,7 @@ void dns(char *host, char *host_retorno)
 }
 
 
+//funcao para separar a requisicao em hos, diretorio, http
 void camposRequisicao(char *buffer_requisicao, char *host, char *requisicao, char *http)
 {
 	char *aux = NULL, *aux_req = NULL;
@@ -163,7 +343,7 @@ void camposRequisicao(char *buffer_requisicao, char *host, char *requisicao, cha
 }
 
 
-
+//funcao que manda a requisição para o servidor externo
 int sendTextHeader (int socket, char *requisicao, char *host, char *http) 
 {
     char message[TAM_BUFFER];
@@ -185,74 +365,86 @@ int sendTextHeader (int socket, char *requisicao, char *host, char *http)
     return n;
 }
 
-void serveText (int conexao_cliente, char *host, char *requisicao, char *http) 
-{
-    struct sockaddr_in ext_addr;
-    int requisito_socket, requisicao_conexao, n;
-    char buffer[TAM_BUFFER];
-
-	char host_ip[INET_ADDRSTRLEN];
 
 
-    // criando socket e verificando se houve erro
-    requisito_socket = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (requisito_socket < 0) 
-    {
-        errx (EXIT_FAILURE, "Erro ao criar o socket do proxy");
-    }
 
 
-    //pegando endereço ip do host solicitado pelo usuario
-    dns(host, host_ip);
-
-    //colocando os parametros para fazer a conexao do socket com o servidor do site externo
-    ext_addr.sin_family = AF_INET;
-    ext_addr.sin_addr.s_addr = inet_addr(host_ip);
-    ext_addr.sin_port = htons(80);
 
 
-    requisicao_conexao = connect(requisito_socket,(struct sockaddr*)&ext_addr,sizeof(struct sockaddr));
-    if (requisicao_conexao < 0) 
-    {
-        errx (EXIT_FAILURE, "Erro de conexao ao servidor remoto");
-    }
+// void serveText (int conexao_cliente, char *host, char *requisicao, char *http) 
+// {
+//     struct sockaddr_in ext_addr;
+//     int requisito_socket, requisicao_conexao, n;
+//     char buffer[TAM_BUFFER];
 
-    //mandando header para o servidor externo
-    n = sendTextHeader (requisito_socket, requisicao, host, http);
+// 	char host_ip[INET_ADDRSTRLEN];
 
 
-    //lendo a resposta do servidor externo e enviando de volta para o cliente
-    if(n<0)
-	{
-		errx (EXIT_FAILURE, "Error writing to socket");
-	}
-	else
-	{
-	    do
-	    {
-	        //zerando buffer para pegar mais respostas
-	        bzero((char*)buffer,TAM_BUFFER);
+//     // criando socket e verificando se houve erro
+//     requisito_socket = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
+//     if (requisito_socket < 0) 
+//     {
+//         errx (EXIT_FAILURE, "Erro ao criar o socket do proxy");
+//     }
+
+
+//     //pegando endereço ip do host solicitado pelo usuario
+//     dns(host, host_ip);
+
+//     //colocando os parametros para fazer a conexao do socket com o servidor do site externo
+//     ext_addr.sin_family = AF_INET;
+//     ext_addr.sin_addr.s_addr = inet_addr(host_ip);
+//     ext_addr.sin_port = htons(80);
+
+
+//     requisicao_conexao = connect(requisito_socket,(struct sockaddr*)&ext_addr,sizeof(struct sockaddr));
+//     if (requisicao_conexao < 0) 
+//     {
+//         errx (EXIT_FAILURE, "Erro de conexao ao servidor remoto");
+//     }
+
+//     //mandando header para o servidor externo
+//     n = sendTextHeader (requisito_socket, requisicao, host, http);
+
+
+//     //lendo a resposta do servidor externo e enviando de volta para o cliente
+//     if(n<0)
+// 	{
+// 		errx (EXIT_FAILURE, "Error writing to socket");
+// 	}
+// 	else
+// 	{
+// 	    do
+// 	    {
+// 	        //zerando buffer para pegar mais respostas
+// 	        bzero((char*)buffer,TAM_BUFFER);
 	        
-	        //le do socket de 1000 em 1000
-	        n=recv(requisito_socket,buffer,TAM_BUFFER,0);
-	        
-	        //enquanto tiver dados no buffer ele le e envia ao usuario
-	        if(!(n<=0))
-	        {
-	            send(conexao_cliente,buffer,n,0);
-	        }
-	        // else
-	        // {
-	        // 	printf("Erro recv -->%s\n", strerror(errno));
-	        // }
-	    } while(n>0);
-	}
+// 	        //le do socket de 1000 em 1000
+// 	        n=recv(requisito_socket,buffer,TAM_BUFFER,0);
 
-	//fecha as conexoes com o servidor externo e a conexao do cliente com o proxy
-	//desse filho
-	close(requisito_socket);
-	close(conexao_cliente);
-}
+// 	        ////////////////////////////////////////////////
+
+// 	        ////----->>>>AQUI VAI O REPLY, MOSTRAR O BUFFER ANTES DE ENVIAR PELO SEND
+	        
+// 	        ///////////////////////////////////////////////
+
+// 	        //enquanto tiver dados no buffer ele le e envia ao usuario
+// 	        if(!(n<=0))
+// 	        {
+// 	            send(conexao_cliente,buffer,n,0);
+// 	        }
+// 	        // else
+// 	        // {
+// 	        // 	printf("Erro recv -->%s\n", strerror(errno));
+// 	        // }
+// 	    } while(n>0);
+// 	}
+
+// 	//fecha as conexoes com o servidor externo e a conexao do cliente com o proxy
+// 	//desse filho
+// 	close(requisito_socket);
+// 	close(conexao_cliente);
+// }
 
 
 // esperando requisiçoes feitas pelo browser
@@ -293,6 +485,7 @@ int inicioSocketProxy (int porta)
 
     // configuração para fazer o proxy ouvir na porta definida
     proxy_addr.sin_family = AF_INET;
+    // proxy_addr.sin_addr.s_addr = inet_addr(IP_PADRAO);
     proxy_addr.sin_addr.s_addr = INADDR_ANY;
     proxy_addr.sin_port = htons(porta);
 
