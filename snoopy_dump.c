@@ -10,6 +10,8 @@
 
 
 #include "snoopy_dump.h"
+#include "snoopy.h"
+
 
 
 
@@ -107,33 +109,22 @@ void nomeArquivoNomeDiretorio(char *host, char *requisicao)
 		}
 
 	}
-
-
-
-
- 
-  //abrindo o arquivo
-  // pont_arq = fopen("/teste_dir/arquivo.txt", "a");
- 
-  // if (pont_arq != NULL)
-  // {
-  // 	  //mensagem para o usuário
-  // printf("O arquivo foi  criado com sucesso!");	
-  // }
-
-  // // fechando arquivo
-  // fclose(pont_arq);
-
-
-	// strcpy(Comd,"mkdir /Users/patriciagoncalves/Documents/UNB/tr2_repo/");
-
-	// strcat(Comd, "dump");
-
-	// system(Comd);
-
-	// printf("Sua pasta foi criada "); 
-	
 }
+
+
+
+void baixando_arquivo()
+{
+	char *ponteiro_reply = NULL;
+
+	ponteiro_reply = proxy(0, DUMP, 1);
+
+	printf("DUMP---->>%s\n", ponteiro_reply);
+}
+
+
+
+
 
 
 
