@@ -15,32 +15,19 @@
 #include <err.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <errno.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-
-#include <curl/curl.h>
-
-#include <sys/stat.h>
-
-
+//#include <curses.h>
 
 
 #define TAM_BUFFER 1000
 #define PORTA_PADRAO 8000
-// #define PORTA_PADRAO 8228
-#define IP_PADRAO "localhost"
-// #define IP_PADRAO  "127.0.0.1"
 
 
-#define DUMP 4
-#define SPIDER 3
-#define PROXY 1
-#define INSPECAO 2
-
-
-
-
+int inicioSocketProxy (int porta);
+int esperandoRequisicao (int proxy_socket);
+void sendTextHeader (int socket, char *buffer_requisicao);
+void serveText (int proxy_socket, char *buffer_requisicao);

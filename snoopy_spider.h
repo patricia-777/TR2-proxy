@@ -10,20 +10,17 @@
 
 
 
-#include "types_global.h"
-#include "snoopy_dump.h"
+ 
+typedef struct Elemento_da_lista{
+    char dados[200];
+    struct Elemento_da_lista *proximo;
+}Elemento;
 
 
-int requisito_socket;
-int conexao_cliente;
-char host[TAM_BUFFER];
-char requisicao[TAM_BUFFER];
-char http[TAM_BUFFER];
-char buffer_requisicao[TAM_BUFFER];
-int proxy_socket;
-int PORTA;
-
-
+struct Localizar{
+  Elemento *inicio;
+  int tamanho;
+} 	;
 
 int inicioSocketProxy (int porta);
 int esperandoRequisicao (int proxy_socket);
@@ -34,7 +31,8 @@ void dns(char *host, char *host_retorno);
 
 int requestOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, char *buffer_requisicao);
 
-char* replyOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, int opcao, char *ponteiro_reply);
+void replyOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http);
 int print_options(void);
-char* proxy(int vezes_while, int opcao, int primeira_requisicao);
 
+void iniciar (Localizar *monte);
+int empilhar(Localizar * monte, char *dados);
