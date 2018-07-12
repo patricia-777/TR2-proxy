@@ -12,43 +12,16 @@
 
 #include "types_global.h"
 
+struct Spider{
+	char modulo[50];	//nome da pasta ou do arquivo entre as barras "/"
+	struct Spider *filho[30];	//lista para armazenar os arquivos ou pastas contidos na pasta pai
+};
+void procuraPath (char *);
+int pegaPath(char *);
+void pushArvore (char * , int );
+void imprimeSpider();
 
-typedef struct MinhaJanela {
-
-	GtkWidget *window;
-	GtkWidget *botao1;
-	GtkWidget *botao2;
-	GtkWidget *botao3;
-	GtkWidget *botao4;
-	GtkWidget *texto1;
-	GtkWidget *texto2;
-	GtkWidget *label1;
-	GtkWidget *label2;
-	GtkWidget *label3;
-	GtkWidget *label4;
-	GtkWidget *grid;
-  	GtkWidget *view1;
-  	GtkTextBuffer *buffer1;
-  	GtkWidget *view2;
-  	GtkTextBuffer *buffer2;
-  	GtkWidget *view3;
-  	GtkTextBuffer *buffer3;
-  	GtkWidget *view4;
-  	GtkTextBuffer *buffer4;
-
-
-	char *string1;
-	char *string2;
-	char *string3;
-	char *string4;
-
-} JanelaPrincipal;
-
-	
-static void botao_clicado1(GtkWidget *, gpointer);
-static void botao_clicado2(GtkWidget *, gpointer);
-static void botao_clicado3(GtkWidget *, gpointer);
-static void botao_clicado4(GtkWidget *, gpointer);
+struct Spider *spider;
 
 int requisito_socket;
 int conexao_cliente;
@@ -69,23 +42,7 @@ int sendTextHeader (int socket, char *requisicao, char *host, char *http);
 void serveText (int conexao_cliente, char *host, char *requisicao, char *http);
 void camposRequisicao(char *buffer_requisicao, char *host, char *requisicao, char *http);
 void dns(char *host, char *host_retorno);
-<<<<<<< HEAD
-
-int requestOption();
-
-void replyOption();
-int print_options(void);
-=======
 int requestOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, char *buffer_requisicao);
 char* replyOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, int opcao, char *ponteiro_reply);
 char* proxy(int vezes_while, int opcao, int primeira_requisicao);
-
-
-
-
-
-
-
-
->>>>>>> 995acd59320bc65051658966924ca593837b4d6b
 

@@ -10,174 +10,6 @@
 
 #include "snoopy.h"
 
-<<<<<<< HEAD
-int main(int argc, char const *argv[])
-{
-	int proxy_socket, tam_requisicao, option;
-	int conexao_cliente;
-	
-	// char host[TAM_BUFFER];
-	// char http[TAM_BUFFER];
-	// char requisicao[TAM_BUFFER];
-	int contador_requisicao = 0, n;
-	int PORTA;
-	//flag para testar a funcao dump
-	int flag_dump;
-	// int requisito_socket;
-	// char buffer_requisicao[TAM_BUFFER];
-	int comparacao, servidor_conectado;
-	//pid_t usado para pegar a referencia do processo filho, depois do fork
-	pid_t pid;
-
-
-	JanelaPrincipal janela;
-	char *teste = "testeste";
-
-	  //a funcao fork cria uma thread filho rodando as mesmas coisas a partir daqui
-		pid=fork();
-		//se a thread for o filho entao entra nesse if
-		if(pid==0)
-		{
-
-	gtk_init(&argc, &argv);
-
-	janela.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-	gtk_window_set_title(GTK_WINDOW(janela.window), "Minha Janela");
-	gtk_window_set_default_size(GTK_WINDOW(janela.window), 1080, 980);
-	gtk_window_set_position(GTK_WINDOW(janela.window), GTK_WIN_POS_CENTER);
-
-	janela.grid = gtk_grid_new();
-	gtk_container_add (GTK_CONTAINER (janela.window), janela.grid);
-
-	janela.view3 = gtk_text_view_new();
-
-	//o que será escrito
-  	janela.buffer1 = gtk_text_view_get_buffer (GTK_TEXT_VIEW (janela.view3));
-  	gtk_text_buffer_set_text(janela.buffer1, teste, -1);
-  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view3, 0,3,1,1);
-	
-	janela.view4 = gtk_text_view_new();
-
-	//o que será escrito
-  	janela.buffer2 = gtk_text_view_get_buffer (GTK_TEXT_VIEW (janela.view4));
-  	gtk_text_buffer_set_text(janela.buffer2, teste, -1);
-  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view4, 270,3,1,1);
-
-	janela.view1 = gtk_text_view_new();
-
-	//o que será escrito
-  	janela.buffer3 =gtk_text_view_get_buffer (GTK_TEXT_VIEW (janela.view1));
-  	gtk_text_buffer_set_text(janela.buffer3, teste, -1);
-  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view1, 540,3,1,1);
-
-	janela.view2 =gtk_text_view_new();
-
-	//o que será escrito
-  	janela.buffer4 = gtk_text_view_get_buffer (GTK_TEXT_VIEW (janela.view2));
-  	gtk_text_buffer_set_text(janela.buffer4, teste, -1);
-  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view2, 810,3,1,1);
-
-	//botoes
-  	janela.botao1 = gtk_button_new_with_label ("Spider");
-  	g_signal_connect (janela.botao1, "clicked", G_CALLBACK (botao_clicado1), &janela);
-  	//g_signal_connect_swapped (botao1, "clicked", G_CALLBACK (gtk_widget_destroy), window);
-	//colocar o botao no grid
-  	gtk_grid_attach(GTK_GRID(janela.grid), janela.botao1, 5, 0, 1, 1);
-
-	//botoes
-  	janela.botao2 = gtk_button_new_with_label ("Dump");
-  	g_signal_connect (janela.botao2, "clicked", G_CALLBACK (botao_clicado2), &janela);
-  	//g_signal_connect_swapped (botao1, "clicked", G_CALLBACK (gtk_widget_destroy), window);
-	//colocar o botao no grid ao lado do botao1
-  	gtk_grid_attach_next_to(GTK_GRID(janela.grid), janela.botao2, janela.botao1,GTK_POS_RIGHT, 1, 1);
-
-	//botoes
-  	janela.botao3 = gtk_button_new_with_label ("Request");
-  	g_signal_connect (janela.botao3, "clicked", G_CALLBACK (botao_clicado3), &janela);
-  	//g_signal_connect_swapped (botao1, "clicked", G_CALLBACK (gtk_widget_destroy), window);
-	//colocar o botao no grid ao lado do botao1
-  	gtk_grid_attach(GTK_GRID(janela.grid), janela.botao3,5, 1, 1, 1);
-	//botoes
-  	janela.botao4 = gtk_button_new_with_label ("Reply");
-  	g_signal_connect (janela.botao4, "clicked", G_CALLBACK (botao_clicado4), &janela);
-  	//g_signal_connect_swapped (botao1, "clicked", G_CALLBACK (gtk_widget_destroy), window);
-	//colocar o botao no grid ao lado do botao1
-  	gtk_grid_attach_next_to(GTK_GRID(janela.grid), janela.botao4, janela.botao3,GTK_POS_RIGHT, 1, 1);
-
-	janela.texto1 = gtk_entry_new();
-	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.texto1, 15, 15);
-	gtk_widget_set_size_request(janela.texto1, 90, 30);
-
-	/*janela.botao = gtk_button_new_with_label("Botão");
-	gtk_fixed_put(GTK_FIXED(janela.fixed), janela.botao, 115, 15);
-	gtk_widget_set_size_request(janela.botao, 80, 30);*/
-
-	janela.label3 = gtk_label_new("Request");
-	gtk_grid_attach(GTK_GRID(janela.grid), janela.label3, 0, 2, 1, 1);
-	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.label, 190, 15);
-	gtk_widget_set_size_request(janela.label3, 100, 30);
-
-	janela.label4 = gtk_label_new("Reply");
-	gtk_grid_attach(GTK_GRID(janela.grid), janela.label4, 270, 2, 1, 1);
-	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.label, 190 15);
-	gtk_widget_set_size_request(janela.label4, 100, 30);
-
-	janela.label1 = gtk_label_new("Spider");
-	gtk_grid_attach(GTK_GRID(janela.grid), janela.label1, 540, 2, 1, 1);
-	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.label, 190 15);
-	gtk_widget_set_size_request(janela.label1, 100, 30);
-
-	janela.label2 = gtk_label_new("Dump");
-	gtk_grid_attach(GTK_GRID(janela.grid), janela.label2, 810, 2, 1, 1);
-	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.label, 190 15);
-	gtk_widget_set_size_request(janela.label2,100, 30);
-
-	janela.string1 = "tuc tuc tuc\n";
-
-	janela.string2 = "cut cut cut\n";
-
-	janela.string3 = "cut cut tuuut\n";
-
-	janela.string4 = "cut-t-t-t\n";
-
-
-	gtk_widget_show_all(janela.window);  
-	
-	
-	gtk_main();
-
-	}
-
-
-
-
-
-//==============================================================================================
-//
-//==============================================================================================
-
-
-
-
-
-
-	//Pegando porta pela linha de comando caso o usuario tenha escrito
-	if (argc < 3)
-	{
-		PORTA = PORTA_PADRAO;
-		// flag_dump = 0;
-	}
-	else
-	{
-		PORTA = atoi(argv[2]);
-		// flag_dump = atoi(argv[3]);
-	}
-
-
-	///////COMECANDO O PROXY MESMO
-=======
->>>>>>> 995acd59320bc65051658966924ca593837b4d6b
 
 
 char* proxy(int vezes_while, int opcao, int primeira_requisicao)
@@ -193,19 +25,10 @@ char* proxy(int vezes_while, int opcao, int primeira_requisicao)
 
 	proxy_socket = inicioSocketProxy(PORTA);
 
-<<<<<<< HEAD
-   while(1)
-    {
-
-		
-		//requisicoes vindas do navegador
-        conexao_cliente = esperandoRequisicao (proxy_socket);
-=======
 	//se for proxy --> vezes_while==1
 	//se for dump ou spider --> vezes_while==0
 	do
     {
->>>>>>> 995acd59320bc65051658966924ca593837b4d6b
 
     	if (opcao == PROXY || opcao == INSPECAO || primeira_requisicao)
     	{
@@ -246,41 +69,10 @@ char* proxy(int vezes_while, int opcao, int primeira_requisicao)
 	    	strcat(buffer_requisicao," HTTP/1.1\nHost: ");
 	    	strcat(buffer_requisicao,buffer_requisicao_editada);
 
-<<<<<<< HEAD
-		        ++contador_requisicao;
-	        }
-	        //se a conexao nao for http, uma mensagem é enviada para o usuario
-    		else
-			{
-				send(conexao_cliente,"ERROR : SORRY DUDE!\nAPENAS CONEXÕES HTTP SÃO PERMITIDAS",60,0);
-			} 
-	        	
-	        // printf ("[SERVER] Served %d requests\n", contador_requisicao);
-	        close(proxy_socket);
-	        _exit(0);
-	    }
-	    //se nao for filho, a conexao com o cliente é fechada
-	    else
-	    {
-	    	close(conexao_cliente);
-	    }     
-
-//==============================================================================================
-//
-//==============================================================================================
-
-
-	 }
-
-	
-	return 0;
-}
-=======
 	    	printf ("[INSPECTOR] Requisição editada: %s\n", buffer_requisicao);
 		}
 
     	servidor_conectado = requestOption(requisito_socket, conexao_cliente, host, requisicao, http, buffer_requisicao);
->>>>>>> 995acd59320bc65051658966924ca593837b4d6b
 
         if (servidor_conectado)
         {
@@ -342,11 +134,7 @@ int requestOption()
 }
 
 
-<<<<<<< HEAD
-void replyOption()
-=======
 char* replyOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, int opcao, char *ponteiro_reply)
->>>>>>> 995acd59320bc65051658966924ca593837b4d6b
 {
     struct sockaddr_in ext_addr;
     int requisicao_conexao, n;
@@ -675,32 +463,222 @@ int inicioSocketProxy (int porta)
     return proxy_socket;
 }
 
-/* Função chamada */
-static void botao_clicado1(GtkWidget *widget, gpointer data){	
-	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer3, ((JanelaPrincipal *)data) -> string1, -1);
+void procuraPath (char *buffer, char *path){
+	char *p = buffer;
+	char *fim, *b, req[60];
+	int tamanho;
 
+	
+	//para href
+	b=buffer;
+	while(b!=NULL){
 
-	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer4,((JanelaPrincipal *)data) -> string2, -1);
+		//procura pelo href
+		p=strstr(b, "href=");
+	
+		//se achou, continua
+		if(p!=NULL){
+			//ai procura ate achar as proximas aspas
+			//6 = 4 caracteres em href e mais dois em =", soma-se 6 para ultrapassar as primeiras aspas
+			fim=strchr((p+6), '\"');
+			//pega o tamanho de tudo contigo entre as aspas
+			tamanho = fim - p;
+			//joga em req
+			strncpy(req, (p+6), (tamanho-6));
+			req[tamanho-6] = '\0';
+			pegaPath(req);
+			//procura no restante do buffer
+			b=fim;
+		}else
+			b=NULL;
+
+	}
+
+	//para src
+	
+	b=buffer;
+	while(b!=NULL){
+
+		//procura pelo href
+		p=strstr(b, "src=");
+	
+		//se achou, continua
+		if(p!=NULL){
+			//ai procura ate achar as proximas aspas
+			//6 = 4 caracteres em href e mais dois em =", soma-se 6 para ultrapassar as primeiras aspas
+			fim=strchr((p+5), '\"');
+			//pega o tamanho de tudo contigo entre as aspas
+			tamanho = fim - p;
+			//joga em req
+			strncpy(req, (p+5), (tamanho-5));
+			req[tamanho-5] = '\0';
+			pegaPath(req);
+			//procura no restante do buffer
+			b=fim;
+		}else
+			b=NULL;
+
+	}
 
 }
 
+int pegaPath (char * path){
+	char *p;
+	char *fim, *b, req[60];
+	int tamanho;
+	int profundidade = 0; 	
 
-static void botao_clicado2(GtkWidget *widget, gpointer data){	
-	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer3, ((JanelaPrincipal *)data) -> string2, -1);
+	b = path;
+
+	//checa pra ver se o primeiro caractere é /, pra ver se é http:// ou pra ver se é caracte
+	if(path[4]==':'){
+		b=path+7;
+		p=b;
+		fim=strchr((p+1), '/');
+		//pega o tamanho de tudo contigo entre as barras
+		tamanho = fim - p+1;
+		//joga em req
+		strncpy(req, (p), (tamanho));
+		req[tamanho-1] = '\0';
+
+		//é o host mesmo?
+		if(strcmp(host,req)!=0)
+			return -1;
+
+		}else{
+			if(path[0]!='/'){
+				while(b!=NULL){
+					//se tá no início
+					if(b==path)
+						p=b;
+					else{
+						//ou se já passou no inicio
+						p=strchr(b, '/');
+					}
+					//se achou, continua
+					if(p!=NULL){
+						profundidade++;
+						//ai procura ate achar a proxima barra ou fim
+						fim=strchr((p+1), '/');
+						if(fim==NULL)
+							fim=strchr((p+1), '\0');
+						//pega o tamanho de tudo contigo entre as aspas
+						tamanho = fim - p+1;
+						//joga em req
+						strncpy(req, (p), (tamanho));
+						req[tamanho-1] = '\0';
+						pushArvore(req, profundidade);
+						//procura no restante do buffer
+						b=fim;
+					}else
+						b=NULL;
+
+					}
+			}else{
+				profundidade=0;
 	
-	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer4, ((JanelaPrincipal *)data) -> string1, -1);
+				while(b!=NULL){
 
+					//procura pelo href
+					p=strchr(b, '/');
+					//se achou, continua
+					if(p!=NULL){						
+						profundidade++;
+						//ai procura ate achar a proxima barra ou fim
+						fim=strchr((p+1), '/');
+						if(fim==NULL)
+							fim=strchr((p+1), '\0');
+						//pega o tamanho de tudo contigo entre as aspas
+						tamanho = fim - p+1;
+						//joga em req
+						strncpy(req, (p), (tamanho));
+						req[tamanho-1] = '\0';
+						pushArvore(req, profundidade);
+						//procura no restante do buffer
+						b=fim;
+					}else
+						b=NULL;
+
+				}
+			}
+		}
+
+
+
+	return 0;
 }
 
 
-static void botao_clicado3(GtkWidget *widget, gpointer data){	
-	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer1, ((JanelaPrincipal *)data) -> string3, -1);
-	
+
+void pushArvore (char * modulo, int profundidade){
+	int n = 0;	
+	int i = 0;
+	int j = 0;
+	int status;
+	struct Spider *aux = spider;
+	struct Spider *pai = spider;
+
+	//vai naquele nível de profundidade e procura pelo parça
+	while(n<profundidade){
+		pai = aux; 
+		//primeiro ver se o filho existe
+		if(pai->filho[0]!=NULL){
+			aux = pai->filho[0];
+		}
+		n=n+1;
+	}
+
+
+	//o nivel 0 sempre existe. Bora ver se já tem filho
+	//se nao tiver filho, o filho zero é NULL
+	if(pai->filho[0]==NULL){
+		//aloca memória
+		aux = (struct Spider*) malloc (sizeof(struct Spider));
+		//não esquecer de novo do que era mais importante que é guardar a string no novo nó		
+		strcpy(aux->modulo, modulo);
+		//faz o pai apontar pra esse primogênito (apontar com carinho)
+		pai->filho[0] = aux;
+		
+	//agora o caso de já ter pelo menos um filho nesse nível	
+	}else{
+		i=0;
+		aux=pai->filho[0];
+		//se o nível não tá vazio, tem que ver se já foi escrito
+		while(aux->modulo!=NULL){
+			if(strcmp(aux->modulo, modulo)!=0)
+				status = 1;
+			i++;
+			aux=pai->filho[i];
+		}
+
+		//se não achou já escrito
+		if(status==1){
+			aux = (struct Spider*) malloc (sizeof(struct Spider));
+			strcpy(aux->modulo, modulo);
+			pai->filho[i]=aux;
+
+		}
+	}
+			
 
 }
 
-static void botao_clicado4(GtkWidget *widget, gpointer data){	
-	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer2, ((JanelaPrincipal *)data) -> string4, -1);
+void imprimeSpider(){
+	int i;
+	int j;
+	struct Spider *aux = spider;
 	
+	i=0;j=0;
+	
+	while(aux!=NULL){
+			while(aux->filho[j]->modulo!=NULL){
+				printf("%d\t%s\n", i,aux->filho[j]->modulo);
+				j=j+1;
+			}
+			j=0;i=i+1;
+			aux=aux->filho[0];
+			
+		
+	}
 
 }
