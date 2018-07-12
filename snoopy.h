@@ -13,12 +13,15 @@
 #include "types_global.h"
 
 
+
 int requisito_socket;
 int conexao_cliente;
 char host[TAM_BUFFER];
 char requisicao[TAM_BUFFER];
 char http[TAM_BUFFER];
 char buffer_requisicao[TAM_BUFFER];
+char buffer_requisicao_editada[TAM_BUFFER];
+char buffer_reply_editada[TAM_BUFFER];
 int proxy_socket;
 int PORTA;
 

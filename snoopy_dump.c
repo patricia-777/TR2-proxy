@@ -14,23 +14,117 @@
 
 
 
+void dump()
+{
+	bzero((char*)buffer_requisicao, TAM_BUFFER);
+	// sprintf(buffer_requisicao,"%s","GET http://www.saopaulo.sp.gov.br/wp-content/themes/saopaulo/governo-do-estado-de-sao-paulo.png HTTP/1.1\nHost: www.saopaulo.sp.gov.br");
+	sprintf(buffer_requisicao,"%s","GET http://www.saopaulo.sp.gov.br/ HTTP/1.1\nHost: www.saopaulo.sp.gov.br");
 
-void criandoFile(char *nome_arquivo)
+	baixando_arquivo(0);
+}
+
+
+void criandoFile(char *nome_arquivo, char *info_arq)
 {
 	// criando a variável ponteiro para o arquivo
 	FILE *pont_arq;
-
 
 	pont_arq = fopen(nome_arquivo, "a");
 
 	if (pont_arq != NULL)
 	{
-		printf("O arquivo %s foi  criado", nome_arquivo);	
+		//usando fprintf para armazenar a string no arquivo
+		fprintf(pont_arq, "%s", info_arq);	
+
+		printf("O arquivo %s foi  criado\n", nome_arquivo);
 	}
 
 	fclose(pont_arq);
+}
+
+
+void baixando_arquivo(int primeira_requisicao)
+{
+	char * pch, *vetor;
+	char *ponteiro_reply = NULL;
+	int index;
+	char *info_gravar;
+
+	ponteiro_reply = proxy(0, DUMP, primeira_requisicao);
+
+	// printf("%s#########\n", ponteiro_reply);
+
+	// pch = strstr (ponteiro_reply,"\n\n");
+	// printf("DUMP---->>%s\n", pch);
+	// index = pch-ponteiro_reply;
+	// info_gravar = &(ponteiro_reply[index]);
+
+	printf("\n");
+
+
+	// printf("DUMP CORTADO---->>%s\n", vetor);
+	criar_arquivo_ext(ponteiro_reply, ponteiro_reply);
 
 }
+
+
+void criar_arquivo_ext(char *reply, char *reply_novo)
+{
+	int index;
+	char *pch, *vetor;
+	char *info_gravar;
+	char *aux = NULL;
+	char *buffer_ext[TAM_BUFFER];
+
+
+	aux = (char*)malloc((strlen(reply))*sizeof(char));
+	sprintf(aux,"%s",reply);
+
+	pch = strstr (reply,"Content-Type:");
+	index = pch-reply;
+	vetor = &(reply[index]);
+
+	pch = strtok(vetor, ": ");
+	pch = strtok(NULL, ": ");
+
+	sprintf(*buffer_ext,"%s",pch);
+
+
+	if (strstr (*buffer_ext,"html"))
+	{
+		pch = strstr (aux,"<!DOCTYPE");
+		index = pch-aux;
+		info_gravar = &(aux[index]);
+
+		criandoFile("index.html", info_gravar);
+	}
+	else if (strstr (*buffer_ext,"png"))
+	{
+		pch = strstr (aux,"PNG");
+		index = pch-aux-1;
+		info_gravar = &(aux[index]);
+
+		criandoFile("index.png", info_gravar);
+	}
+	else if (strstr (*buffer_ext,"jpg"))
+	{
+		criandoFile("index.jpg", reply);
+	}
+	else if (strstr (*buffer_ext,"jpeg"))
+	{
+		criandoFile("index.jpeg", reply);
+	}
+	else if (strstr (*buffer_ext,"css"))
+	{
+		criandoFile("index.css", reply);
+	}
+	else
+	{
+		printf("Arquivo não suportado!\n");
+	}
+}
+
+
 
 
 void criandoDiretorioDump(char *diretorio)
@@ -78,7 +172,7 @@ void nomeArquivoNomeDiretorio(char *host, char *requisicao)
 			strcat(nome_arquivo, nome_pasta);
 			strcat(nome_arquivo, "index.html");
 			
-			criandoFile(nome_arquivo);
+			// criandoFile(nome_arquivo);
 
 			flag_fim = 1;
 			//cria arquivoooo
@@ -101,7 +195,7 @@ void nomeArquivoNomeDiretorio(char *host, char *requisicao)
 			}
 			else
 			{
-				criandoFile(buffer_aux);
+				// criandoFile(buffer_aux);
 				//criar arquivo de nome buffer_aux
 				flag_fim = 0;
 			}
@@ -112,34 +206,6 @@ void nomeArquivoNomeDiretorio(char *host, char *requisicao)
 }
 
 
-
-void baixando_arquivo()
-{
-	char *ponteiro_reply = NULL;
-
-	ponteiro_reply = proxy(0, DUMP, 1);
-
-	printf("DUMP---->>%s\n", ponteiro_reply);
-}
-
-
-
-
-
-
-
-void dumpOption(char *host, char *requisicao)
-{
-	// char buffer_requisicao[TAM_BUFFER];
-
-	// nomeArquivoNomeDiretorio(buffer_requisicao, host, requisicao);
-	// printf("HOST-->%s\nARQUIVO-->%s\nDIRETORIO-->%s\n", host, nome_arquivo, diretorio);
-
-	//criando diretorios
-	nomeArquivoNomeDiretorio(host, requisicao);
-
-	
-}
 
 
 // void salvandoArquivos(char *nome_diretorio, char *porta, char *nome_arquivo)

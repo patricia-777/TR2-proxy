@@ -59,13 +59,16 @@ int print_options(void)
 			proxy(1, PROXY, 1);
 			break;
 		case INSPECAO:
+			printf ("[INSPECTOR] Iniciando inspector SNOOPY\n");
+		    printf ("[INSPECTOR] Endereço do SNOOPY http://%s:%d/\n", IP_PADRAO, PORTA);
 			proxy(1, INSPECAO, 1);
 			break;
 		case SPIDER:
 			proxy(0, SPIDER, 1);
 			break;
 		case DUMP:
-			baixando_arquivo();
+			// baixando_arquivo();
+			dump();
 			break;
 		default:
 			printf("Opção inválida\n");

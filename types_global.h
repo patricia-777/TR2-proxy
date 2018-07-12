@@ -22,13 +22,13 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#include <curl/curl.h>
-
 #include <sys/stat.h>
 
 
 
 
+
+#define EDITAR_REPLY 0
 #define TAM_BUFFER 1000
 #define PORTA_PADRAO 8000
 // #define PORTA_PADRAO 8228
