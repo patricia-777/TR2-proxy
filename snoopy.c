@@ -29,6 +29,138 @@ int main(int argc, char const *argv[])
 	pid_t pid;
 
 
+	JanelaPrincipal janela;
+	char *teste = "testeste";
+
+	  //a funcao fork cria uma thread filho rodando as mesmas coisas a partir daqui
+		pid=fork();
+		//se a thread for o filho entao entra nesse if
+		if(pid==0)
+		{
+
+	gtk_init(&argc, &argv);
+
+	janela.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+	gtk_window_set_title(GTK_WINDOW(janela.window), "Minha Janela");
+	gtk_window_set_default_size(GTK_WINDOW(janela.window), 1080, 980);
+	gtk_window_set_position(GTK_WINDOW(janela.window), GTK_WIN_POS_CENTER);
+
+	janela.grid = gtk_grid_new();
+	gtk_container_add (GTK_CONTAINER (janela.window), janela.grid);
+
+	janela.view3 = gtk_text_view_new();
+
+	//o que será escrito
+  	janela.buffer1 = gtk_text_view_get_buffer (GTK_TEXT_VIEW (janela.view3));
+  	gtk_text_buffer_set_text(janela.buffer1, teste, -1);
+  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view3, 0,3,1,1);
+	
+	janela.view4 = gtk_text_view_new();
+
+	//o que será escrito
+  	janela.buffer2 = gtk_text_view_get_buffer (GTK_TEXT_VIEW (janela.view4));
+  	gtk_text_buffer_set_text(janela.buffer2, teste, -1);
+  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view4, 270,3,1,1);
+
+	janela.view1 = gtk_text_view_new();
+
+	//o que será escrito
+  	janela.buffer3 =gtk_text_view_get_buffer (GTK_TEXT_VIEW (janela.view1));
+  	gtk_text_buffer_set_text(janela.buffer3, teste, -1);
+  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view1, 540,3,1,1);
+
+	janela.view2 =gtk_text_view_new();
+
+	//o que será escrito
+  	janela.buffer4 = gtk_text_view_get_buffer (GTK_TEXT_VIEW (janela.view2));
+  	gtk_text_buffer_set_text(janela.buffer4, teste, -1);
+  	gtk_grid_attach(GTK_GRID(janela.grid), janela.view2, 810,3,1,1);
+
+	//botoes
+  	janela.botao1 = gtk_button_new_with_label ("Spider");
+  	g_signal_connect (janela.botao1, "clicked", G_CALLBACK (botao_clicado1), &janela);
+  	//g_signal_connect_swapped (botao1, "clicked", G_CALLBACK (gtk_widget_destroy), window);
+	//colocar o botao no grid
+  	gtk_grid_attach(GTK_GRID(janela.grid), janela.botao1, 5, 0, 1, 1);
+
+	//botoes
+  	janela.botao2 = gtk_button_new_with_label ("Dump");
+  	g_signal_connect (janela.botao2, "clicked", G_CALLBACK (botao_clicado2), &janela);
+  	//g_signal_connect_swapped (botao1, "clicked", G_CALLBACK (gtk_widget_destroy), window);
+	//colocar o botao no grid ao lado do botao1
+  	gtk_grid_attach_next_to(GTK_GRID(janela.grid), janela.botao2, janela.botao1,GTK_POS_RIGHT, 1, 1);
+
+	//botoes
+  	janela.botao3 = gtk_button_new_with_label ("Request");
+  	g_signal_connect (janela.botao3, "clicked", G_CALLBACK (botao_clicado3), &janela);
+  	//g_signal_connect_swapped (botao1, "clicked", G_CALLBACK (gtk_widget_destroy), window);
+	//colocar o botao no grid ao lado do botao1
+  	gtk_grid_attach(GTK_GRID(janela.grid), janela.botao3,5, 1, 1, 1);
+	//botoes
+  	janela.botao4 = gtk_button_new_with_label ("Reply");
+  	g_signal_connect (janela.botao4, "clicked", G_CALLBACK (botao_clicado4), &janela);
+  	//g_signal_connect_swapped (botao1, "clicked", G_CALLBACK (gtk_widget_destroy), window);
+	//colocar o botao no grid ao lado do botao1
+  	gtk_grid_attach_next_to(GTK_GRID(janela.grid), janela.botao4, janela.botao3,GTK_POS_RIGHT, 1, 1);
+
+	janela.texto1 = gtk_entry_new();
+	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.texto1, 15, 15);
+	gtk_widget_set_size_request(janela.texto1, 90, 30);
+
+	/*janela.botao = gtk_button_new_with_label("Botão");
+	gtk_fixed_put(GTK_FIXED(janela.fixed), janela.botao, 115, 15);
+	gtk_widget_set_size_request(janela.botao, 80, 30);*/
+
+	janela.label3 = gtk_label_new("Request");
+	gtk_grid_attach(GTK_GRID(janela.grid), janela.label3, 0, 2, 1, 1);
+	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.label, 190, 15);
+	gtk_widget_set_size_request(janela.label3, 100, 30);
+
+	janela.label4 = gtk_label_new("Reply");
+	gtk_grid_attach(GTK_GRID(janela.grid), janela.label4, 270, 2, 1, 1);
+	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.label, 190 15);
+	gtk_widget_set_size_request(janela.label4, 100, 30);
+
+	janela.label1 = gtk_label_new("Spider");
+	gtk_grid_attach(GTK_GRID(janela.grid), janela.label1, 540, 2, 1, 1);
+	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.label, 190 15);
+	gtk_widget_set_size_request(janela.label1, 100, 30);
+
+	janela.label2 = gtk_label_new("Dump");
+	gtk_grid_attach(GTK_GRID(janela.grid), janela.label2, 810, 2, 1, 1);
+	//gtk_fixed_put(GTK_FIXED(janela.fixed1), janela.label, 190 15);
+	gtk_widget_set_size_request(janela.label2,100, 30);
+
+	janela.string1 = "tuc tuc tuc\n";
+
+	janela.string2 = "cut cut cut\n";
+
+	janela.string3 = "cut cut tuuut\n";
+
+	janela.string4 = "cut-t-t-t\n";
+
+
+	gtk_widget_show_all(janela.window);  
+	
+	
+	gtk_main();
+
+	}
+
+
+
+
+
+//==============================================================================================
+//
+//==============================================================================================
+
+
+
+
+
+
 	//Pegando porta pela linha de comando caso o usuario tenha escrito
 	if (argc < 3)
 	{
@@ -55,8 +187,9 @@ int main(int argc, char const *argv[])
 
     printf ("[PROXY] Esperando requisiçoes...\n");
 
-    while(1)
+   while(1)
     {
+
 		
 		//requisicoes vindas do navegador
         conexao_cliente = esperandoRequisicao (proxy_socket);
@@ -124,8 +257,15 @@ int main(int argc, char const *argv[])
 	    {
 	    	close(conexao_cliente);
 	    }     
-    }
 
+//==============================================================================================
+//
+//==============================================================================================
+
+
+	 }
+
+	
 	return 0;
 }
 
@@ -197,7 +337,7 @@ int requestOption()
 }
 
 
-void replyOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http)
+void replyOption()
 {
     struct sockaddr_in ext_addr;
     int requisicao_conexao, n;
@@ -498,4 +638,34 @@ int inicioSocketProxy (int porta)
     }
 
     return proxy_socket;
+}
+
+/* Função chamada */
+static void botao_clicado1(GtkWidget *widget, gpointer data){	
+	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer3, ((JanelaPrincipal *)data) -> string1, -1);
+
+
+	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer4,((JanelaPrincipal *)data) -> string2, -1);
+
+}
+
+
+static void botao_clicado2(GtkWidget *widget, gpointer data){	
+	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer3, ((JanelaPrincipal *)data) -> string2, -1);
+	
+	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer4, ((JanelaPrincipal *)data) -> string1, -1);
+
+}
+
+
+static void botao_clicado3(GtkWidget *widget, gpointer data){	
+	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer1, ((JanelaPrincipal *)data) -> string3, -1);
+	
+
+}
+
+static void botao_clicado4(GtkWidget *widget, gpointer data){	
+	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer2, ((JanelaPrincipal *)data) -> string4, -1);
+	
+
 }
