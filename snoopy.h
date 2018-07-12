@@ -11,7 +11,7 @@
 
 
 #include "types_global.h"
-#include "snoopy_dump.h"
+
 
 typedef struct MinhaJanela {
 
@@ -56,6 +56,10 @@ char host[TAM_BUFFER];
 char requisicao[TAM_BUFFER];
 char http[TAM_BUFFER];
 char buffer_requisicao[TAM_BUFFER];
+char buffer_requisicao_editada[TAM_BUFFER];
+char buffer_reply_editada[TAM_BUFFER];
+int proxy_socket;
+int PORTA;
 
 
 
@@ -65,9 +69,23 @@ int sendTextHeader (int socket, char *requisicao, char *host, char *http);
 void serveText (int conexao_cliente, char *host, char *requisicao, char *http);
 void camposRequisicao(char *buffer_requisicao, char *host, char *requisicao, char *http);
 void dns(char *host, char *host_retorno);
+<<<<<<< HEAD
 
 int requestOption();
 
 void replyOption();
 int print_options(void);
+=======
+int requestOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, char *buffer_requisicao);
+char* replyOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, int opcao, char *ponteiro_reply);
+char* proxy(int vezes_while, int opcao, int primeira_requisicao);
+
+
+
+
+
+
+
+
+>>>>>>> 995acd59320bc65051658966924ca593837b4d6b
 

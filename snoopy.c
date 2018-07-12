@@ -10,6 +10,7 @@
 
 #include "snoopy.h"
 
+<<<<<<< HEAD
 int main(int argc, char const *argv[])
 {
 	int proxy_socket, tam_requisicao, option;
@@ -175,33 +176,52 @@ int main(int argc, char const *argv[])
 
 
 	///////COMECANDO O PROXY MESMO
+=======
+>>>>>>> 995acd59320bc65051658966924ca593837b4d6b
 
 
-	printf ("[PROXY] Iniciando servidor proxy SNOOPY\n");
-    printf ("[PROXY] Endereço do SNOOPY http://%s:%d/\n", IP_PADRAO, PORTA);
-    // option = print_options();
-    
+char* proxy(int vezes_while, int opcao, int primeira_requisicao)
+{
+	int comparacao, servidor_conectado;
+	int tam_requisicao, option;
+	struct sockaddr_in cliente_addr;
+	socklen_t cliente_tam;
+	int conexao_cliente;
+	char c;
+	char *ponteiro_reply = NULL;
 
-    //criando o socket do proxy
-    proxy_socket = inicioSocketProxy(PORTA);
 
-    printf ("[PROXY] Esperando requisiçoes...\n");
+	proxy_socket = inicioSocketProxy(PORTA);
 
+<<<<<<< HEAD
    while(1)
     {
 
 		
 		//requisicoes vindas do navegador
         conexao_cliente = esperandoRequisicao (proxy_socket);
+=======
+	//se for proxy --> vezes_while==1
+	//se for dump ou spider --> vezes_while==0
+	do
+    {
+>>>>>>> 995acd59320bc65051658966924ca593837b4d6b
 
+    	if (opcao == PROXY || opcao == INSPECAO || primeira_requisicao)
+    	{
+		    //habilita o servidor a rceber conexoes dos clientes
+		    listen (proxy_socket, 1);
+		    
+		    printf ("[PROXY/INSPECTOR] Esperando requisicao...\n");
 
+		    // aceitando as conexoes do cliente e verificando se houve erro
+		    cliente_tam = sizeof (cliente_addr);
+		    conexao_cliente = accept (proxy_socket, (struct sockaddr *)&cliente_addr, &cliente_tam);
+		    if (conexao_cliente < 0) 
+		    {
+		        errx (EXIT_FAILURE, "Erro ao aceitar conexao do cliente");
+		    }
 
-
-        //a funcao fork cria uma thread filho rodando as mesmas coisas a partir daqui
-		pid=fork();
-		//se a thread for o filho entao entra nesse if
-		if(pid==0)
-		{
 
 	        //essa funcao le o que esta no socket, e retorna o tamanho da mensagem ou -1 se tiver erro
 	        bzero((char*)buffer_requisicao, TAM_BUFFER);
@@ -210,36 +230,23 @@ int main(int argc, char const *argv[])
 	        {
 	            errx (EXIT_FAILURE, "Erro ao ler a requisição");
 	        }
+		}
 
-	        printf ("[REQUEST] Requisição recebida: %s\n", buffer_requisicao);
-	        // option = print_options();
-	        
-	        // if(option == 1)
-	        // {
-		        //fazendo o request do proxy
-	        	servidor_conectado = requestOption(requisito_socket, conexao_cliente, host, requisicao, http, buffer_requisicao);
-	        // }
+		if (opcao == INSPECAO)
+		{
+			printf ("[INSPECTOR] Requisição recebida: %s\n", buffer_requisicao);
 
+			printf("[INSPECTOR] Escreva a requisição editada: ");
 
-	        // if ((option == 1) && servidor_conectado)
-	        if (servidor_conectado)
-	        {
+			scanf("%s", buffer_requisicao_editada);
 
-		        //funcoa que faz o dump
-	        	// dumpOption(host, requisicao);
+	    	bzero((char*)buffer_requisicao, TAM_BUFFER);
+	    	strcat(buffer_requisicao,"GET http://");
+	    	strcat(buffer_requisicao,buffer_requisicao_editada);
+	    	strcat(buffer_requisicao," HTTP/1.1\nHost: ");
+	    	strcat(buffer_requisicao,buffer_requisicao_editada);
 
-
-		        ////mostrando a requisiçãoelo cliente 
-		        // printf ("[REQUEST] Requisição recebida: %s\n", buffer_requisicao);
-		        printf ("[REQUEST] Enviando resposta...\n\n");
-
-
-				replyOption(requisito_socket, conexao_cliente, host, requisicao, http);
-
-
-		        printf ("\n[REQUEST] Resposta enviada\n");
-		        printf ("[REQUEST] Conexão fechada\n");
-
+<<<<<<< HEAD
 		        ++contador_requisicao;
 	        }
 	        //se a conexao nao for http, uma mensagem é enviada para o usuario
@@ -268,41 +275,39 @@ int main(int argc, char const *argv[])
 	
 	return 0;
 }
+=======
+	    	printf ("[INSPECTOR] Requisição editada: %s\n", buffer_requisicao);
+		}
+
+    	servidor_conectado = requestOption(requisito_socket, conexao_cliente, host, requisicao, http, buffer_requisicao);
+>>>>>>> 995acd59320bc65051658966924ca593837b4d6b
+
+        if (servidor_conectado)
+        {
+	        printf ("[AGUARDE] Enviando resposta...\n");
+
+	        ponteiro_reply = (char*)malloc((TAM_BUFFER+1)*sizeof(char));
+			ponteiro_reply = replyOption(requisito_socket, conexao_cliente, host, requisicao, http, opcao, ponteiro_reply);
 
 
+	        printf ("[AGUARDE] Resposta enviada\n");
+	        printf ("[AGUARDE] Conexão fechada\n\n\n");
+        }
+        //se a conexao nao for http, uma mensagem é enviada para o usuario
+		else
+		{
+			send(conexao_cliente,"ERROR : SORRY DUDE!\nAPENAS CONEXÕES HTTP SÃO PERMITIDAS",60,0);
+		} 
 
-int print_options(void)
-{
-	int option = 0;
+    	close(conexao_cliente);
 
-	printf("SELECIONE A OPCAO DESEJADA:\n\n");
-	printf("1- Request\n");
-	printf("2- Spider\n");
-	printf("3- Dump\n");
-	printf("4- Reply\n");
+    	bzero((char*)buffer_requisicao, TAM_BUFFER);
+ 
+    }while(vezes_while);
 
-	scanf("%d", &option);
-
-	switch (option)
-	{
-		case 1:
-			printf("falta fazer\n");
-			break;
-		case 2:
-			printf("falta fazer\n");
-			break;
-		case 3:
-			printf("tamu fazendo\n");
-			break;
-		case 4:
-			printf("falta fazer\n");
-			break;
-		default:
-			printf("Opção invalida\n");
-	}
-
-	return option;
+    return ponteiro_reply;
 }
+
 
 
 
@@ -311,6 +316,7 @@ int requestOption()
 {
 	int tam_requisicao;
 	int comparacao, flag_http, n;
+	char c;
 
 
     //MOSTRAR AQUI O BUFFER E DEPOIS DO BOTAO REQUEST FOR CLICADO VERIFICAR O BUFFER
@@ -323,7 +329,6 @@ int requestOption()
 	comparacao = strncmp(http, "HTTP/", 5);
     if (!comparacao)
     {
-    	printf ("[REQUEST] Requisição editada: %s\n", buffer_requisicao);
     	printf ("[REQUEST] Conectando ao servidor externo...\n");
 
     	flag_http = 1;
@@ -337,7 +342,11 @@ int requestOption()
 }
 
 
+<<<<<<< HEAD
 void replyOption()
+=======
+char* replyOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, int opcao, char *ponteiro_reply)
+>>>>>>> 995acd59320bc65051658966924ca593837b4d6b
 {
     struct sockaddr_in ext_addr;
     int requisicao_conexao, n;
@@ -370,9 +379,12 @@ void replyOption()
         errx (EXIT_FAILURE, "Erro de conexao ao servidor remoto");
     }
 
+    // printf("CONECTADO AO SERVIDOR EXTERNO\n");
+
     //mandando header para o servidor externo
     n = sendTextHeader (requisito_socket, requisicao, host, http);
 
+    // printf("ENVIANDO HEADER\n");
 
 	if(n<0)
 	{
@@ -388,20 +400,38 @@ void replyOption()
 			//le do socket de 1000 em 1000
 			n=recv(requisito_socket,buffer,TAM_BUFFER,0);
 
-			// printf("[REPLY]Resposta recebida:%s\n", buffer);
-
-			// option = print_options();
-			////////////////////////////////////////////////
-
-			////----->>>>AQUI VAI O REPLY, MOSTRAR O BUFFER ANTES DE ENVIAR PELO SEND
-
-			///////////////////////////////////////////////
-
 			//enquanto tiver dados no buffer ele le e envia ao usuario
-			// if((!(n<=0)) && (option == 4))
 			if(!(n<=0))
 			{
-			    send(conexao_cliente,buffer,n,0);
+
+				if (opcao == DUMP || opcao == SPIDER)
+				{
+					strcat(ponteiro_reply,buffer);
+					// printf("REQUISICAO---->>>%s\n", buffer);
+					ponteiro_reply = (char*)realloc(ponteiro_reply, (TAM_BUFFER+1)*sizeof(char));
+
+					//mostrando uma mensagem de satisfação para o cliente
+					char *message = "Processando pedido...\n";
+					send (conexao_cliente, message, strlen (message), 0);
+				}
+				else
+				{
+					if (EDITAR_REPLY)
+					{
+						bzero((char*)buffer_reply_editada, TAM_BUFFER);
+						printf ("[REPLY] Resposta recebida: %s\n", buffer);
+
+						printf("[REPLY] Escreva a resposta editada: ");
+
+						scanf("%s", buffer_reply_editada);
+
+						send(conexao_cliente,buffer_reply_editada,n,0);
+					}
+					else
+					{
+						send(conexao_cliente,buffer,n,0);	
+					}
+				}
 			}
 
 		} while(n>0);
@@ -409,6 +439,9 @@ void replyOption()
 
     close(requisito_socket);
 	close(conexao_cliente);
+
+
+	return ponteiro_reply;
 
 }
 
@@ -595,6 +628,8 @@ int esperandoRequisicao (int proxy_socket)
 	struct sockaddr_in cliente_addr;
 	socklen_t cliente_tam;
 	int conexao_cliente;
+
+
 
     //habilita o servidor a rceber conexoes dos clientes
     listen (proxy_socket, 1);

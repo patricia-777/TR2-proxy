@@ -12,8 +12,9 @@
 #include "types_global.h"
 
 
-void criandoFile(char *nome_arquivo);
+void criandoFile(char *nome_arquivo, char *info_arq);
 void criandoDiretorioDump(char *diretorio);
 void nomeArquivoNomeDiretorio(char *host, char *requisicao);
-void dumpOption(char *host, char *requisicao);
-// void nomeArquivoNomeDiretorio(char *buffer_requisicao, char *host, char *nome_arquivo, char *diretorio);
+void baixando_arquivo(int);
+void criar_arquivo_ext(char *reply, char *);
+void dump(void);

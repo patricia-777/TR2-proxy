@@ -6,7 +6,7 @@ int main ()
   char str[] = "This is a sample string sample";
   char * pch;
   printf ("Looking for the string in \"%s\"...\n",str);
-  pch = strstr (str,"sample");
+  pch = strstr (str,"ample");
   while (pch!=NULL)
   {
     printf ("found at %d\n",pch-str+1);
