@@ -19,6 +19,7 @@ int main(int argc, char const *argv[])
 	int contador_requisicao = 0, n;
 	int flag_dump;
 	int comparacao, servidor_conectado;
+	char *reply=NULL;
 
 
 	//Pegando porta pela linha de comando caso o usuario tenha escrito
@@ -31,7 +32,9 @@ int main(int argc, char const *argv[])
 		PORTA = atoi(argv[2]);
 	}
 
-	print_options();
+	reply=print_options(0, SPIDER, 1);
+	procuraPath(reply);
+	imprimeSpider();
 
 	return 0;
 }
