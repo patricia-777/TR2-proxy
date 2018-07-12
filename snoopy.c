@@ -463,7 +463,7 @@ int inicioSocketProxy (int porta)
     return proxy_socket;
 }
 
-void procuraPath (char *buffer, char *path){
+void procuraPath (char *buffer){
 	char *p = buffer;
 	char *fim, *b, req[60];
 	int tamanho;

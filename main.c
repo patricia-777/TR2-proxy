@@ -19,7 +19,6 @@ int main(int argc, char const *argv[])
 	int contador_requisicao = 0, n;
 	int flag_dump;
 	int comparacao, servidor_conectado;
-	char *reply=NULL;
 
 
 	//Pegando porta pela linha de comando caso o usuario tenha escrito
@@ -32,9 +31,8 @@ int main(int argc, char const *argv[])
 		PORTA = atoi(argv[2]);
 	}
 
-	reply=print_options(0, SPIDER, 1);
-	procuraPath(reply);
-	imprimeSpider();
+	print_options();
+
 
 	return 0;
 }
@@ -44,6 +42,9 @@ int main(int argc, char const *argv[])
 int print_options(void)
 {
 	int option = 0;
+	char *reply=NULL;
+
+
 	printf("###########################################\n");
 	printf("\tSELECIONE A OPCAO DESEJADA:\n\n");
 	printf("\t1- Proxy\n");
@@ -67,7 +68,10 @@ int print_options(void)
 			proxy(1, INSPECAO, 1);
 			break;
 		case SPIDER:
-			proxy(0, SPIDER, 1);
+			reply=proxy(0, SPIDER, 1);
+			// printf("REPLY-->>%s\n", reply);
+			procuraPath(reply);
+			imprimeSpider();
 			break;
 		case DUMP:
 			// baixando_arquivo();
