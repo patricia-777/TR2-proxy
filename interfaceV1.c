@@ -37,6 +37,11 @@ static void botao_clicado2(GtkWidget *, gpointer);
 static void botao_clicado3(GtkWidget *, gpointer);
 static void botao_clicado4(GtkWidget *, gpointer);
 
+/*! \brief Controi a janela e demais widgets
+*
+* Em GTK, as janelas, os botoes, a grade, entre outros, sao todos widgets do GTK que devem ter suas relacoes explicitadas
+* na funcao activate
+*/
 static void activate (GtkApplication *app, gpointer user_data)
 {
 	JanelaPrincipal janela;
@@ -149,7 +154,11 @@ main (int    argc,
   return status;
 }
 
-/* Função chamada */
+/*! \brief as funcoens botao_clicadon devem ser acionadas quando se clica no botao
+*
+* Ha um ponteiro para funcao no botao que chama essas funcoes. Essa funcao deveria ser substituida para uma funcao do proxy 
+* no codigo principal.
+*/
 static void botao_clicado1(GtkWidget *widget, gpointer data){	
 	gtk_text_buffer_set_text(((JanelaPrincipal *)data) -> buffer3, ((JanelaPrincipal *)data) -> string1, -1);
 
