@@ -23,7 +23,12 @@ int main ()
   return 0;
 }
 
-void procuraPath (char *buffer, char *path){
+/*!\brief procuraPath procura os caminhos de pastas contidos no HTML
+ *
+ * Depois de achar o caminho inteiro, cada pasta vai para pegaPath, assim como a profundidade de cada pasta em relacao ao dominio
+ * A entrada eh o HTML de alguma reply
+ */
+void procuraPath (char *buffer){
 	char *p = buffer;
 	char *fim, *b, req[60];
 	int tamanho;
@@ -82,6 +87,11 @@ void procuraPath (char *buffer, char *path){
 
 }
 
+/*! \brief A funcao pegaPath separa o caminho de uma pasta em cada pasta singularmente
+ *
+ * Cada pasta selecionada sera enviada a funcao pushArvore, para que seja colocada na arvore. C
+ * Cada pasta possui uma profundidade, sendo que o host tem profundiade zero.
+ */
 int pegaPath (char * path){
 	char *p;
 	char *fim, *b, req[60];
@@ -169,7 +179,11 @@ int pegaPath (char * path){
 }
 
 
-
+/*! \brief pushArvore cria ou aloca nos na arvore
+ * 
+ * Se o no (nome da pasta e profundidade) não existir, cria-se um novo. Se existir, ignora.
+ * Cada no pode ter multiplos filhos.
+ */
 void pushArvore (char * modulo, int profundidade){
 	int n = 0;	
 	int i = 0;
@@ -222,6 +236,11 @@ void pushArvore (char * modulo, int profundidade){
 			
 
 }
+
+/*! \brief Funcao imprimeSpider imprime o conteudo da arvore de paths
+*
+* Imprime em largura, mostrando profundidade e nome da pasta no terminal.
+*/
 
 void imprimeSpider(){
 	int i;
