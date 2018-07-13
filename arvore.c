@@ -17,7 +17,7 @@ int main ()
 		i++;
 	}*/
 
-  	procuraPath(str, pch);
+  	procuraPath(str);
 	imprimeSpider();
 
   return 0;
