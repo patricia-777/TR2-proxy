@@ -13,6 +13,11 @@
 
 int print_options(void);
 
+
+/*! \brief main funcao principal que mostra as opcoes do projeto
+ *
+ * Chama a funcao print_options para mostrar as opcoes do projeto
+ */
 int main(int argc, char const *argv[])
 {
 	int conexao_cliente;
@@ -38,7 +43,10 @@ int main(int argc, char const *argv[])
 }
 
 
-
+/*! \brief print_options funcao que coordena a execucao de cada funcionalidade do projeto
+ *
+ * Chama a funcao correspondente de cada funcionalidade, de acordo com a opcao escolhida
+ */
 int print_options(void)
 {
 	int option = 0;
@@ -69,12 +77,10 @@ int print_options(void)
 			break;
 		case SPIDER:
 			reply=proxy(0, SPIDER, 1);
-			// printf("REPLY-->>%s\n", reply);
 			procuraPath(reply);
 			imprimeSpider();
 			break;
 		case DUMP:
-			// baixando_arquivo();
 			dump();
 			break;
 		default:

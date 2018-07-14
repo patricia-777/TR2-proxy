@@ -31,8 +31,7 @@
 
 #define EDITAR_REPLY 0
 #define TAM_BUFFER 1000
-#define PORTA_PADRAO 8000
-// #define PORTA_PADRAO 8228
+#define PORTA_PADRAO 8228
 #define IP_PADRAO "localhost"
 // #define IP_PADRAO  "127.0.0.1"
 

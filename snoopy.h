@@ -13,8 +13,8 @@
 #include "types_global.h"
 
 struct Spider{
-	char modulo[50];	//nome da pasta ou do arquivo entre as barras "/"
-	struct Spider *filho[30];	//lista para armazenar os arquivos ou pastas contidos na pasta pai
+	char modulo[TAM_BUFFER];	//nome da pasta ou do arquivo entre as barras "/"
+	struct Spider *filho[TAM_BUFFER];	//lista para armazenar os arquivos ou pastas contidos na pasta pai
 };
 void procuraPath (char *);
 int pegaPath(char *);
@@ -44,5 +44,12 @@ void camposRequisicao(char *buffer_requisicao, char *host, char *requisicao, cha
 void dns(char *host, char *host_retorno);
 int requestOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, char *buffer_requisicao);
 char* replyOption(int requisito_socket, int conexao_cliente, char *host, char *requisicao, char *http, int opcao, char *ponteiro_reply);
+
+
+/*!\brief proxy funcao principal que aceita uma requisicao e retorna um vetor com a resposta
+ *
+ * Essa funcao e usada por todas as funcionalidades do projeto, fazendo as requisicoes e retornando
+ * a resposta do servidor externo.
+ */
 char* proxy(int vezes_while, int opcao, int primeira_requisicao);
 

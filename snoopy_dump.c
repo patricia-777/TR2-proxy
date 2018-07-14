@@ -13,20 +13,26 @@
 #include "snoopy.h"
 
 
-
+/*!\brief dump funcao do dump que baixa o arquivo pedido de acordo com a url
+*
+* Essa funcao chama a funcao baixando_arquivo, para começar o processo de salvar o arquivo na pasta local
+*/
 void dump()
 {
 	bzero((char*)buffer_requisicao, TAM_BUFFER);
-	// sprintf(buffer_requisicao,"%s","GET http://www.saopaulo.sp.gov.br/wp-content/themes/saopaulo/governo-do-estado-de-sao-paulo.png HTTP/1.1\nHost: www.saopaulo.sp.gov.br");
+	
 	sprintf(buffer_requisicao,"%s","GET http://www.saopaulo.sp.gov.br/ HTTP/1.1\nHost: www.saopaulo.sp.gov.br");
 
 	baixando_arquivo(0);
 }
 
-
+/*!\brief criandoFile funcao do dump que cria o arquivo a ser baixado
+*
+* Essa funcao cria o arquivo de acordo com o nome e extensao passados, e grava o conteudo tambem passado
+*/
 void criandoFile(char *nome_arquivo, char *info_arq)
 {
-	// criando a variável ponteiro para o arquivo
+	// criando a variavel ponteiro para o arquivo
 	FILE *pont_arq;
 
 	pont_arq = fopen(nome_arquivo, "a");
@@ -42,7 +48,10 @@ void criandoFile(char *nome_arquivo, char *info_arq)
 	fclose(pont_arq);
 }
 
-
+/*!\brief baixando_arquivo recebe o conteudo da resposta e começa o porcesso de salva-lo em um arquivo
+*
+* Essa funcao chama a funcao criar_arquivo_ext para selecionar o tipo de arquivo que devera ser "baixado"
+*/
 void baixando_arquivo(int primeira_requisicao)
 {
 	char * pch, *vetor;
@@ -52,22 +61,16 @@ void baixando_arquivo(int primeira_requisicao)
 
 	ponteiro_reply = proxy(0, DUMP, primeira_requisicao);
 
-	// printf("%s#########\n", ponteiro_reply);
-
-	// pch = strstr (ponteiro_reply,"\n\n");
-	// printf("DUMP---->>%s\n", pch);
-	// index = pch-ponteiro_reply;
-	// info_gravar = &(ponteiro_reply[index]);
-
 	printf("\n");
 
-
-	// printf("DUMP CORTADO---->>%s\n", vetor);
 	criar_arquivo_ext(ponteiro_reply, ponteiro_reply);
 
 }
 
-
+/*!\brief criar_arquivo_ext gerencia a criacao do arquivo de acordo com a sua extensão
+*
+* Essa funcao "separa" o cabeçalho HTTP da resposta em si, e chama a funcao para gerar o arquivo de acordo com a sua extensao
+*/
 void criar_arquivo_ext(char *reply, char *reply_novo)
 {
 	int index;
@@ -126,7 +129,10 @@ void criar_arquivo_ext(char *reply, char *reply_novo)
 
 
 
-
+/*!\brief criandoDiretorioDump cria o diretorio que foi passado por parametro
+*
+* Essa funcao cria as pastas do site em questão, simulando a estrutura do site
+*/
 void criandoDiretorioDump(char *diretorio)
 {
 	struct stat st={0};
@@ -138,6 +144,12 @@ void criandoDiretorioDump(char *diretorio)
 
 }
 
+
+/*!\brief nomeArquivoNomeDiretorio separa a requisicao em diretorios e os cria
+*
+* Essa funcao identifica os diretórios do site de acordo com as urls, e chama a funcao 
+* criandoDiretorioDump para cria-los.
+*/
 void nomeArquivoNomeDiretorio(char *host, char *requisicao)
 {
 
@@ -154,13 +166,8 @@ void nomeArquivoNomeDiretorio(char *host, char *requisicao)
 
 	criandoDiretorioDump(nome_pasta);
 
-	// printf("NOME PASTA -->>%s\n", requisicao);
-	//passa o valor do diretorio para outra variavel
 	sprintf(buffer_aux,"%s",requisicao);
 
-
-	// "/pasta/index.html"
-	// "index.html"
 	
 	aux = strtok(requisicao, "/");
 	while(!flag_fim)
@@ -175,7 +182,7 @@ void nomeArquivoNomeDiretorio(char *host, char *requisicao)
 			// criandoFile(nome_arquivo);
 
 			flag_fim = 1;
-			//cria arquivoooo
+
 		}
 		else
 		{
@@ -196,7 +203,6 @@ void nomeArquivoNomeDiretorio(char *host, char *requisicao)
 			else
 			{
 				// criandoFile(buffer_aux);
-				//criar arquivo de nome buffer_aux
 				flag_fim = 0;
 			}
 
@@ -204,115 +210,3 @@ void nomeArquivoNomeDiretorio(char *host, char *requisicao)
 
 	}
 }
-
-
-
-
-// void salvandoArquivos(char *nome_diretorio, char *porta, char *nome_arquivo)
-// {
-// 	CURL *curl_handle;
-// 	FILE *pagefile;
-// 	static const char *pagefilename;
-
-
-
-// 	//concatenar strings para salvar arquivos nas respectivas pastas
-// 	strcat(nome_diretorio, nome_arquivo);
-
-// 	//abrindo arquivos
-// 	sprintf(pagefilename,"%s",nome_arquivo);
-	
-
-// 	curl_global_init(CURL_GLOBAL_ALL);
-
-// 	/* init the curl session */ 
-// 	curl_handle = curl_easy_init();
-
-// 	/* set URL to get here */ 
-// 	curl_easy_setopt(curl_handle, CURLOPT_URL, host);
-
-// 	/* Switch on full protocol/debug output while testing */ 
-// 	curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);
-
-// 	 disable progress meter, set to 0L to enable and disable debug output  
-// 	curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
-
-// 	/* send all data to this function  */ 
-// 	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
-
-// 	/* open the file */ 
-// 	pagefile = fopen(pagefilename, "wb");
-// 	if(pagefile) 
-// 	{
-
-// 		/* write the page body to this file handle */ 
-// 		curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, pagefile);
-
-// 		/* get it! */ 
-// 		curl_easy_perform(curl_handle);
-
-// 		/* close the header file */ 
-// 		fclose(pagefile);
-// 	}
-
-// 	/* cleanup curl stuff */ 
-// 	curl_easy_cleanup(curl_handle);
-
-// 	curl_global_cleanup();
-// }
-
-
-
-// void nomeArquivoNomeDiretorio(char *buffer_requisicao, char *host, char *nome_arquivo, char *diretorio)
-// {
-// 	char *aux = NULL, *aux_req = NULL;
-// 	char aux_concat[TAM_BUFFER];
-// 	char dados_lixo[TAM_BUFFER];
-// 	char requisicao[TAM_BUFFER];
-
-// 	//pegando a parte GET do cabeçalho da requisição
-// 	//dividido em GET http://site HTTP
-// 	aux = strtok(buffer_requisicao,"\n");
-// 	sscanf(aux,"%s %s", dados_lixo, requisicao);
-
-// 	//pegando atributo host do cabeçalho
-// 	//no formato Host: site.com.br
-// 	aux = strtok(NULL,"\n");
-// 	sscanf(aux,"%s %s", dados_lixo, host);
-
-
-
-// 	//pegando a parte de requisição e isolando somenete o diretorio que foi pedido
-// 	//http://site.com.br/diretorio.html
-// 	aux_req = strtok(requisicao, "/");
-// 	aux_req = strtok(NULL, "/");
-
-// 	//pegando a raiz do diretorio
-// 	sprintf(diretorio,"%s",aux_req);
-
-// 	//pegando o diretorio
-// 	aux_req = strtok(NULL, "/");
-
-// 	//passa o resultado para o nome do arquivo
-// 	sprintf(nome_arquivo,"%s",aux_req);
-
-// 	//verifica se tem mais de um diretorio na requisição
-// 	//pega outros diretorios da requisição e concatena com o primeiro
-// 	aux_req = strtok(NULL, "/");
-// 	while (aux_req != NULL)
-// 	{
-// 		//concatena com a /
-// 		strcat(diretorio, "/");
-// 		strcat(diretorio, nome_arquivo);
-// 		// strcat(requisicao, "/");
-		
-		
-// 		sprintf(nome_arquivo,"%s",aux_req);
-
-		
-// 		// strcat(requisicao, aux_concat);
-		
-		
-// 		aux_req = strtok(NULL, "/");
-// 	}
-// }
